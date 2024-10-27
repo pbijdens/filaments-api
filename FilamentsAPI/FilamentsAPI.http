@@ -1,0 +1,13 @@
+@FilamentsAPI_HostAddress = https://localhost:7247
+
+POST {{FilamentsAPI_HostAddress}}/authentication/login/
+Accept: application/json
+
+username=pbijdens
+secret=VERY-INSECURE-WAY-OF_AUTHENTICATING
+###
+
+GET {{FilamentsAPI_HostAddress}}/authentication/refresh/
+Accept: application/json
+
+###
