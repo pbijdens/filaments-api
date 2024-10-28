@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-using FilamentsAPI.Services;
 using System.Security.Claims;
+using FilamentsAPI.Services.Authentication;
 
 namespace FilamentsAPI.Attributes
 {

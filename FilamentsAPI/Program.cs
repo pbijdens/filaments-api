@@ -2,6 +2,10 @@ using FilamentsAPI;
 using FilamentsAPI.Model;
 using FilamentsAPI.Persistence;
 using FilamentsAPI.Services;
+using FilamentsAPI.Services.Authentication;
+using FilamentsAPI.Services.Filaments;
+using FilamentsAPI.Services.Storage;
+using FilamentsAPI.Services.Storageboxes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -57,6 +61,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IDatabaseServices, MySQLDatabaseService>();
 builder.Services.AddTransient<IAuthorizationService, AuthorizationService>();
+builder.Services.AddTransient<IPhotoStore, FilesystemPhotoStore>();
+builder.Services.AddTransient<IFilamentsService, FilamentsService>();
+builder.Services.AddTransient<IStorageboxesService, StorageboxesService>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -64,7 +71,6 @@ builder.Services.AddTransient<CustomJwtBearerHandler>();
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddScheme<JwtBearerOptions, CustomJwtBearerHandler>(JwtBearerDefaults.AuthenticationScheme, options => { });
-
 
 var app = builder.Build();
 

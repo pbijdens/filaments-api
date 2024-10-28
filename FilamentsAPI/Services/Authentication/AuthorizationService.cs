@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Principal;
 
-namespace FilamentsAPI.Services
+namespace FilamentsAPI.Services.Authentication
 {
     /// <summary>
     /// Authorization service
@@ -34,7 +34,7 @@ namespace FilamentsAPI.Services
             string newHashedPassword = salt + TokenService.CalculateSha256Hash(salt + model.Password);
             using var db = new FilamentsAPIDbContext(configuration);
             EnsureLoggedInUserIsAdmin(db, loggedInUser);
-            AccountEntity entity = new() { Username = model.Username, SaltedPasswordHash = newHashedPassword};
+            AccountEntity entity = new() { Username = model.Username, SaltedPasswordHash = newHashedPassword };
             if (model.Acls != null && entity.ACLs != null)
             {
                 foreach (var acl in model.Acls ?? [])
@@ -191,7 +191,7 @@ namespace FilamentsAPI.Services
         private void EnsureUserIsStillAdministrator(ClaimsPrincipal loggedInUser, FilamentsAPIDbContext db, AccountEntity accountEntity)
         {
             if (IsTargetUSerSameAsLoggedInUser(db, loggedInUser, accountEntity.Id) &&
-                (!(accountEntity.ACLs ?? []).Any(acl => acl.Id == appSettings.Value.AdminACLId)))
+                !(accountEntity.ACLs ?? []).Any(acl => acl.Id == appSettings.Value.AdminACLId))
             {
                 throw new UnauthorizedAccessException("You can't remove your own admin rights");
             }

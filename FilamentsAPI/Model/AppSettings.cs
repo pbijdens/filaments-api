@@ -29,5 +29,9 @@
         /// 4. prefix sha256 hash with the hash and put that in this field (abcdfcc24a9890cb514be545f04e32a11caa255c15702ef859ce2181243bcbd71d62)
         /// </summary>
         public string DefaultUserHash {  get; set; } = string.Empty;
+        /// <summary>
+        /// Photo folder path.
+        /// </summary>
+        public string PhotoPath {  get; set; } = string.Empty;
     }
 }

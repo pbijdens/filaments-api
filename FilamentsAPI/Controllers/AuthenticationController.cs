@@ -1,6 +1,7 @@
 ﻿using FilamentsAPI.Attributes;
 using FilamentsAPI.Model.Accounts;
 using FilamentsAPI.Services;
+using FilamentsAPI.Services.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;

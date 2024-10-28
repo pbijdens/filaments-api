@@ -5,58 +5,71 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FilamentsAPI.Controllers
 {
+    /// <summary>
+    /// Filament-related operations
+    /// </summary>
     [ApiController]
     [Route("filament")]
-    public class FilamentController : ControllerBase
+    public class FilamentController(IFilamentsService filamentsService) : ControllerBase
     {
         /// <summary>
         /// Returns the list of all filaments
         /// </summary>
         [HttpGet()]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<List<FilamentHeaderModel>>> GetFilaments()
         {
-            throw new NotImplementedException();
+            return await filamentsService.GetFilaments();
         }
 
         /// <summary>
         /// Returns details for a single filament
         /// </summary>
         [HttpGet("{filamentId}")]
-        [Authorize]
-        public async Task<ActionResult<FilamentDetailsModel>> GetFilament([FromQuery] int filamentId)
+        //[Authorize]
+        public async Task<ActionResult<FilamentDetailsModel>> GetFilament([FromRoute] int filamentId)
         {
-            throw new NotImplementedException();
+            return await filamentsService.GetFilament(filamentId);
         }
 
         /// <summary>
         /// Update an existing filament
         /// </summary>
         [HttpPut()]
-        [Authorize]
-        public async Task<ActionResult<FilamentHeaderModel>> UpdateFilament([FromBody] FilamentDetailsModel model)
+        //[Authorize]
+        public async Task<ActionResult<FilamentDetailsModel>> UpdateFilament([FromBody] FilamentDetailsModel model)
         {
-            throw new NotImplementedException();
+            return await filamentsService.UpdateFilament(model);
         }
 
         /// <summary>
         /// Create a new filament
         /// </summary>
         [HttpPost()]
-        [Authorize]
-        public async Task<ActionResult<FilamentHeaderModel>> CreateFilament([FromBody] FilamentHeaderModel model)
+        //[Authorize]
+        public async Task<ActionResult<FilamentDetailsModel>> CreateFilament([FromBody] FilamentDetailsModel model)
         {
-            throw new NotImplementedException();
+            return await filamentsService.CreateFilament(model);
+        }
+
+        /// <summary>
+        /// Create or update the filament photo
+        /// </summary>
+        [HttpPut("{filamentId}/photo")]
+        //[Authorize]
+        public async Task<ActionResult<FilamentDetailsModel>> UpdateFilamentPhoto([FromRoute] int filamentId, IFormFile file)
+        {
+            return await filamentsService.UpdateFilamentPhoto(filamentId, file);
         }
 
         /// <summary>
         /// Delete a filament
         /// </summary>
         [HttpDelete("{filamentId}")]
-        [Authorize]
-        public async Task<ActionResult<FilamentHeaderModel>> DeleteFilament([FromQuery] int filamentId)
+        //[Authorize]
+        public async Task<ActionResult<bool>> DeleteFilament([FromRoute] int filamentId)
         {
-            throw new NotImplementedException();
+            return await filamentsService.DeleteFilament(filamentId);
         }
     }
 }

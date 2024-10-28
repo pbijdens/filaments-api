@@ -20,14 +20,27 @@ namespace FilamentsAPI.Persistence
         /// Accounts
         /// </summary>
         public DbSet<AccountEntity> Accounts { get; set; }
+
         /// <summary>
         /// All ACLs
         /// </summary>
         public DbSet<AclEntity> ACLs { get; set; }
+
         /// <summary>
         /// Global settings.
         /// </summary>
         public DbSet<CsSetting> Settings { get; set; }
+
+        /// <summary>
+        /// Filaments.
+        /// </summary>
+        public DbSet<FilamentEntity> Filaments{ get; set; }
+
+        /// <summary>
+        /// Storage boxes.
+        /// </summary>
+        public DbSet<StorageboxEntity> Storageboxes { get; set; }
+
         /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -66,6 +79,21 @@ namespace FilamentsAPI.Persistence
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(256);
                 entity.HasIndex(e => e.Name).IsUnique(true);
                 entity.HasMany(e => e.Accounts).WithMany(a => a.ACLs);
+            });
+
+            modelBuilder.Entity<FilamentEntity>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.HasOne(e => e.StorageBox).WithMany(a => a.Filaments).OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<StorageboxEntity>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.Name).IsRequired();
+                entity.HasMany(e => e.Filaments).WithOne(a => a.StorageBox).OnDelete(DeleteBehavior.NoAction);
             });
         }
     }

@@ -1,6 +1,5 @@
 ﻿using FilamentsAPI.Model;
 using FilamentsAPI.Persistence;
-using FilamentsAPI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -11,7 +10,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace FilamentsAPI.Services
+namespace FilamentsAPI.Services.Authentication
 {
     /// <summary>
     /// Service for dealing with tokens.
