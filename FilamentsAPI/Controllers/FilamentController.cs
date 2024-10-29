@@ -1,5 +1,4 @@
-﻿using FilamentsAPI.Attributes;
-using FilamentsAPI.Model.Filaments;
+﻿using FilamentsAPI.Model.Filaments;
 using FilamentsAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +9,7 @@ namespace FilamentsAPI.Controllers
     /// </summary>
     [ApiController]
     [Route("filament")]
-    public class FilamentController(IFilamentsService filamentsService) : ControllerBase
+    public class FilamentController(IFilamentsService filamentsService, IPhotoStore photoStore) : ControllerBase
     {
         /// <summary>
         /// Returns the list of all filaments
@@ -55,11 +54,11 @@ namespace FilamentsAPI.Controllers
         /// <summary>
         /// Create or update the filament photo
         /// </summary>
-        [HttpPut("{filamentId}/photo")]
+        [HttpPost("{filamentId}/photo")]
         //[Authorize]
-        public async Task<ActionResult<FilamentDetailsModel>> UpdateFilamentPhoto([FromRoute] int filamentId, IFormFile file)
+        public async Task<ActionResult<FilamentDetailsModel>> UpdateFilamentPhoto([FromRoute] int filamentId, IFormFile photo)
         {
-            return await filamentsService.UpdateFilamentPhoto(filamentId, file);
+            return await filamentsService.UpdateFilamentPhoto(filamentId, photo);
         }
 
         /// <summary>
@@ -70,6 +69,23 @@ namespace FilamentsAPI.Controllers
         public async Task<ActionResult<bool>> DeleteFilament([FromRoute] int filamentId)
         {
             return await filamentsService.DeleteFilament(filamentId);
+        }
+
+        /// <summary>
+        /// Gets the full photo
+        /// </summary>
+        /// <param name="filamentId"></param>
+        /// <returns></returns>
+        [HttpGet("{filamentId}/photo")]
+        public async Task<FileStreamResult?> Photo([FromRoute] int filamentId)
+        {
+            FilamentDetailsModel filament = await filamentsService.GetFilament(filamentId);
+            if (!string.IsNullOrWhiteSpace(filament?.PhotoID))
+            {
+                (Stream data, string contentType) photoStream = await photoStore.Open(filament.PhotoID);
+                return new FileStreamResult(photoStream.data, photoStream.contentType);
+            }
+            return new FileStreamResult(new FileStream("noimage.png", FileMode.Open, FileAccess.Read), "image/png");
         }
     }
 }

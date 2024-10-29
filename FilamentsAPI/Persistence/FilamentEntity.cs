@@ -103,7 +103,7 @@ namespace FilamentsAPI.Persistence
                 using var stream = await photoStore.OpenThumbnail(PhotoID);
                 if (stream != null)
                 {
-                    result.Photo = "data:image/jpeg;" + stream.AsByteArray().Base64Encode();
+                    result.Photo = "data:image/jpeg;base64," + stream.AsByteArray().Base64Encode();
                 }
             }
             return result;

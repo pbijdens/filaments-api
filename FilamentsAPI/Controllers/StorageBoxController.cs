@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FilamentsAPI.Model.Storageboxes;
-using FilamentsAPI.Attributes;
-using FilamentsAPI.Model.Filaments;
-using FilamentsAPI.Services.Filaments;
 using FilamentsAPI.Services;
 
 namespace FilamentsAPI.Controllers
@@ -12,7 +9,7 @@ namespace FilamentsAPI.Controllers
     /// </summary>
     [ApiController]
     [Route("storagebox")]
-    public class StorageBoxController(IStorageboxesService storageboxesService) : ControllerBase
+    public class StorageBoxController(IStorageboxesService storageboxesService, IPhotoStore photoStore) : ControllerBase
     {
         /// <summary>
         /// Returns the list of all storageboxes
@@ -47,11 +44,11 @@ namespace FilamentsAPI.Controllers
         /// <summary>
         /// Create or update the filament photo
         /// </summary>
-        [HttpPut("{storageboxId}/photo")]
+        [HttpPost("{storageboxId}/photo")]
         //[Authorize]
-        public async Task<ActionResult<StorageboxDetailsModel>> UpdateFilamentPhoto([FromRoute] int storageboxId, IFormFile file)
+        public async Task<ActionResult<StorageboxDetailsModel>> UpdateFilamentPhoto([FromRoute] int storageboxId, IFormFile photo)
         {
-            return await storageboxesService.UpdateStorageboxPhoto(storageboxId, file);
+            return await storageboxesService.UpdateStorageboxPhoto(storageboxId, photo);
         }
 
         /// <summary>
@@ -72,6 +69,23 @@ namespace FilamentsAPI.Controllers
         public async Task<ActionResult<bool>> DeleteStoragebox([FromRoute] int storageboxId)
         {
             return await storageboxesService.DeleteStoragebox(storageboxId);
+        }
+
+        /// <summary>
+        /// Gets the full photo
+        /// </summary>
+        /// <param name="storageboxId"></param>
+        /// <returns></returns>
+        [HttpGet("{storageboxId}/photo")]
+        public async Task<FileStreamResult?> Photo([FromRoute] int storageboxId)
+        {
+            StorageboxDetailsModel storagebox = await storageboxesService.GetStoragebox(storageboxId);
+            if (!string.IsNullOrWhiteSpace(storagebox?.PhotoID))
+            {
+                (Stream data, string contentType) photoStream = await photoStore.Open(storagebox.PhotoID);
+                return new FileStreamResult(photoStream.data, photoStream.contentType);
+            }
+            return new FileStreamResult(new FileStream("noimage.png", FileMode.Open, FileAccess.Read), "image/png");
         }
     }
 }
