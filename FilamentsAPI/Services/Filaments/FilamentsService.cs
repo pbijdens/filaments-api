@@ -102,8 +102,8 @@ namespace FilamentsAPI.Services.Filaments
             entity.Color1 = model.Color1;
             entity.Color2 = model.Color2;
             entity.Description = model.Description;
-            entity.FirstAdded = DateTimeOffset.Parse(model.FirstAdded + "T00:00:00Z");
-            entity.LastUpdated = DateTimeOffset.Parse(model.LastUpdated + "T00:00:00Z");
+            entity.FirstAdded = string.IsNullOrWhiteSpace(model.FirstAdded) ? DateTimeOffset.UtcNow : DateTimeOffset.Parse(model.FirstAdded + "T00:00:00Z");
+            entity.LastUpdated = string.IsNullOrWhiteSpace(model.LastUpdated) ? DateTimeOffset.UtcNow : DateTimeOffset.Parse(model.LastUpdated + "T00:00:00Z");
             entity.InitialWeight = model.InitialWeight;
             entity.Kind = model.Kind;
             entity.Weight = model.Weight;

@@ -92,7 +92,7 @@ namespace FilamentsAPI.Services.Storageboxes
         {
             entity.Name = model.Name;
             entity.Notes = model.Notes;
-            entity.LastDessicantChange = DateTimeOffset.Parse(model.LastDessicantChange + "T00:00:00Z");
+            entity.LastDessicantChange = string.IsNullOrWhiteSpace(model.LastDessicantChange) ? DateTimeOffset.UtcNow : DateTimeOffset.Parse(model.LastDessicantChange + "T00:00:00Z");
             await Task.FromResult(0);
         }
     }
