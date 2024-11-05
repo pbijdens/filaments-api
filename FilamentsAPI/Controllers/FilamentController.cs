@@ -18,7 +18,7 @@ namespace FilamentsAPI.Controllers
         //[Authorize]
         public async Task<ActionResult<List<FilamentHeaderModel>>> GetFilaments()
         {
-            return await filamentsService.GetFilaments();
+            return await filamentsService.SearchFilaments();
         }
 
         /// <summary>
@@ -86,6 +86,21 @@ namespace FilamentsAPI.Controllers
                 return new FileStreamResult(photoStream.data, photoStream.contentType);
             }
             return new FileStreamResult(new FileStream("noimage.png", FileMode.Open, FileAccess.Read), "image/png");
+        }
+
+        /// <summary>
+        /// Returns the list of all filaments
+        /// </summary>
+        [HttpGet("search")]
+        //[Authorize]
+        public async Task<ActionResult<List<FilamentHeaderModel>>> Search(
+            [FromQuery(Name = "q")] string? queryString, 
+            [FromQuery(Name = "box")] int? boxId, 
+            [FromQuery(Name = "brand")] string? brand, 
+            [FromQuery(Name = "kind")] string? kind, 
+            [FromQuery(Name = "color")] string? color)
+        {
+            return await filamentsService.SearchFilaments(queryString, boxId, brand, kind, color);
         }
     }
 }

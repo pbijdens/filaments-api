@@ -52,7 +52,7 @@ sudo chown -R root:root /var/www/FilamentsAPIapi
 sudo chmod -R a+rX /var/www/FilamentsAPIapi
 ```
 
-If you don't have the file yet, copy /var/www/FilamentsAPIapi/appsettings.json to /var/www/FilamentsAPIapi/appsettings.Production.json and fill in the missing information. The Secret can just be some random string, the LoginSecret is an API password for some restricted functionality. *this is currently notr used so set it to some default*.
+If you don't have the file yet, copy /var/www/FilamentsAPIapi/appsettings.json to /var/www/FilamentsAPIapi/appsettings.Production.json and fill in the missing information. The Secret can just be some random string, the LoginSecret is an API password for some restricted functionality. *this is currently not used so set it to some default*.
 
 Create a service definition file for your service, based on ```deployment-files/FilamentsAPIapi.service```. Note that you will need to adjust this for the location of your dotnet binary.
 

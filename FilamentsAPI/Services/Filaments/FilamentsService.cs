@@ -37,7 +37,7 @@ namespace FilamentsAPI.Services.Filaments
         }
 
         /// <inheritdoc/>
-        public async Task<List<FilamentHeaderModel>> GetFilaments()
+        public async Task<List<FilamentHeaderModel>> SearchFilaments()
         {
             using FilamentsAPIDbContext db = new(configuration);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -51,6 +51,35 @@ namespace FilamentsAPI.Services.Filaments
 
             List<FilamentHeaderModel> result = new();
             foreach (var filament in filaments)
+            {
+                result.Add(await filament.AsFilamentHeaderModel(photoStore));
+            }
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<FilamentHeaderModel>> SearchFilaments(string? queryString, int? boxId, string? brand, string? kind, string? color)
+        {
+            using FilamentsAPIDbContext db = new(configuration);
+            var query = db.Filaments.Include(f => f.StorageBox).AsNoTracking();
+            if (!string.IsNullOrEmpty(queryString)) query = query.Where(x =>
+                (x.Description != null && x.Description.Contains(queryString, StringComparison.OrdinalIgnoreCase))
+                || (x.Brand != null && x.Brand.Contains(queryString, StringComparison.OrdinalIgnoreCase))
+                || (x.Kind != null && x.Kind.Contains(queryString, StringComparison.OrdinalIgnoreCase))
+                || (x.Notes != null && x.Notes.Contains(queryString, StringComparison.OrdinalIgnoreCase))
+                || (x.StorageBox != null && x.StorageBox.Name.Contains(queryString, StringComparison.OrdinalIgnoreCase))
+                );
+            if (boxId.HasValue) query = query.Where(x => x.StorageBox != null && x.StorageBox.Id == boxId);
+            if (!string.IsNullOrEmpty(brand)) query = query.Where(x => x.Brand != null && x.Brand.Contains(brand));
+            if (!string.IsNullOrEmpty(kind)) query = query.Where(x => x.Kind != null && x.Brand.Contains(kind));
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference, do not care for linq2sql
+            query = query.OrderBy(x => x.StorageBox.Name).ThenBy(x => x.Description);
+#pragma warning restore CS8602 
+
+            List<FilamentHeaderModel> result = new();
+            foreach (var filament in query.ToList())
             {
                 result.Add(await filament.AsFilamentHeaderModel(photoStore));
             }
